@@ -1,0 +1,16 @@
+{
+    "project_root_dir": "/home/gui/Downloads/gyy0525/",
+    
+    "exp_root": "/home/gui/Downloads/gyy0525/output",
+    "save_dir": "/home/gui/Downloads/gyy0525/eval",
+
+
+    "mnist_root": "/home/gui/Downloads/Datasets/mnist",
+    "svhn_root": "/home/gui/Downloads/Datasets/svhn",
+    "cifar_10_root": "/home/gui/Downloads/Datasets/cifar-10",
+    "cifar_100_root": "/home/gui/Downloads/Datasets/cifar-100",
+    "tiny_train_root_dir": "/home/gui/Downloads/Datasets/tiny-imagenet-200/train",
+    "tiny_val_root_dir": "/home/gui/Downloads/Datasets/tiny-imagenet-200/val/images",
+
+    "osr_split_dir": "/home/gui/Downloads/cl_osr/data/open_set_splits"
+}

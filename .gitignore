@@ -1,4 +1,4 @@
 /features
-/loss
+/loss/__pycache__
 /dataset/__pycache__
 ./config.json

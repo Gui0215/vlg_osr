@@ -9,10 +9,10 @@ class SupConLoss(nn.Module):
     """
     def __init__(self, **options):
         super(SupConLoss, self).__init__()
-        self.temperature = options['temperature'] #0.07
-        self.contrast_mode = options['contrast_mode'] #'all'
-        self.base_temperature = options['base_temperature'] #0.07
-        self.use_gpu = options['use_gpu']
+        self.temperature = 0.07 # options['temperature']
+        self.contrast_mode = 'all' # options['contrast_mode']
+        self.base_temperature = 0.07 # options['base_temperature'] 
+        self.use_gpu = True
 
     def forward(self, x, labels=None):
         """
@@ -59,12 +59,7 @@ class SupConLoss(nn.Module):
         # tile mask
         mask = mask.repeat(anchor_count, contrast_count)
         # mask-out self-contrast cases
-        logits_mask = torch.scatter(
-            torch.ones_like(mask),
-            1,
-            torch.arange(batch_size * anchor_count).view(-1, 1).to(device),
-            0
-        )
+        logits_mask = torch.scatter(torch.ones_like(mask), 1, torch.arange(batch_size * anchor_count).view(-1, 1).to(device), 0)
         mask = mask * logits_mask
 
         # compute log_prob

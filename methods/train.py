@@ -12,13 +12,18 @@ def train(net, criterion, optimizer, trainloader, epoch=None, **options):
 
     loss_all = 0
     for batch_idx, (data, labels, idx) in enumerate(tqdm(trainloader)):
+
+        data = torch.cat([data[0], data[1]], dim=0)
+        batch_size = labels.shape[0]
         if options['use_gpu']:
             data, labels = data.cuda(), labels.cuda()
 
         with torch.set_grad_enabled(True):
             optimizer.zero_grad()
             x = net(data)
-            logits, loss = criterion(x, labels)
+            f1, f2 = torch.split(x, [batch_size, batch_size], dim=0)
+            x = torch.cat([f1.unsqueeze(1), f2.unsqueeze(1)], dim=1)
+            loss = criterion(x, labels)
             loss.backward()
             optimizer.step()
     

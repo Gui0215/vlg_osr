@@ -35,8 +35,8 @@ get_dataset_funcs = {
     # 'pku-aircraft': get_pku_aircraft_datasets
 }
 
-def get_datasets(name, transform='default', image_size=224, train_classes=(0, 1, 8, 9),
-                 open_set_classes=range(10), balance_open_set_eval=False, split_train_val=True, seed=0, args=None):
+def get_datasets(name, transform='default', image_size=224, train_classes=(0, 1, 8, 9), open_set_classes=range(10), 
+                 balance_open_set_eval=False, split_train_val=True, seed=0, args=None, contrast=False):
 
     """
     :param name: Dataset name
@@ -49,7 +49,7 @@ def get_datasets(name, transform='default', image_size=224, train_classes=(0, 1,
     if isinstance(transform, tuple):
         train_transform, test_transform = transform
     else:
-        train_transform, test_transform = get_transform(transform_type=transform, image_size=image_size, args=args)
+        train_transform, test_transform = get_transform(transform_type=transform, image_size=image_size, args=args, contrast=contrast)
 
     if name in get_dataset_funcs.keys():
         datasets = get_dataset_funcs[name](train_transform, test_transform, train_classes=train_classes,

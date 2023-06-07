@@ -3,3 +3,6 @@
 /dataset/__pycache__
 ./config.json
 /output
+/__pycache__
+/methods/__pycache__
+/dataset/augmentations/__pycache__

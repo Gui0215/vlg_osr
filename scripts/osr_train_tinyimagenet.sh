@@ -3,19 +3,12 @@ PYTHON='/home/gui/.conda/envs/mmcv2/bin/python'
 export CUDA_VISIBLE_DEVICES=0
 
 # Get unique log file
-SAVE_DIR=/home/gui/Downloads/gyy0525/log/tiny-imagenet/
-LOSS='Softmax' # For TinyImageNet, ARPLoss and Softmax loss have the same
-                     # RandAug and Label Smoothing hyper-parameters, but different learning rates
-
+SAVE_DIR=/home/gui/Downloads/vlg_osr/log/tiny-imagenet/
+LOSS='SupConLoss'
+LR=0.01
+TEMP=0.1
 # Fixed hyper params for both ARPLoss and Softmax
 LABEL_SMOOTHING=0
-
-# LR different for ARPLoss and others
-if [ $LOSS = "ARPLoss" ]; then
-   LR=0.001
-else
-   LR=0.01
-fi
 
 # tinyimagenet
 for SPLIT_IDX in 0; do
@@ -24,23 +17,24 @@ for SPLIT_IDX in 0; do
   EXP_NUM=$((${EXP_NUM}+1))
   echo $EXP_NUM
 
-  ${PYTHON} -m osr   --lr=${LR} \
-                     --model='resnet18' \
-                     --transform='tinyimagenet' \
+  ${PYTHON} -m pretrain_osr   --lr=${LR} \
+                     --model='vgg32' \
+                     --temp=${TEMP} \
+                     --transform='rand-augment' \
+                     --rand_aug_m=8 \
+                     --rand_aug_n=1 \
                      --dataset='tinyimagenet' \
                      --image_size=64 \
                      --loss=${LOSS} \
-                     --scheduler='cosine_warm_restarts_warmup' \
-                     --label_smoothing=${LABEL_SMOOTHING} \
+                     --scheduler='cosine' \
                      --split_train_val='False' \
-                     --batch_size=128 \
+                     --batch_size=256 \
                      --num_workers=12 \
-                     --max-epoch=100 \
+                     --max-epoch=300 \
                      --seed=0 \
                      --gpus 0 \
                      --weight_decay=1e-4 \
-                     --num_restarts=2 \
-                     --feat_dim=512 \
+                     --feat_dim=128 \
                      --split_idx=${SPLIT_IDX} \
                      > ${SAVE_DIR}logfile_${EXP_NUM}.out
 

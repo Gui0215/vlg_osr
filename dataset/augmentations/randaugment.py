@@ -273,18 +273,10 @@ class CutoutDefault(object):
 
 
 class RandAugment:
-    def __init__(self, n, m, args=None):
+    def __init__(self, n, m):
         self.n = n      # [1, 2]
         self.m = m      # [0...30]
-
-        if args is None:
-            self.augment_list = augment_list()
-
-        elif args.dataset == 'svhn' or args.dataset == 'mnist':
-            self.augment_list = augment_list_svhn()
-
-        else:
-            self.augment_list = augment_list()
+        self.augment_list = augment_list()
 
     def __call__(self, img):
         ops = random.choices(self.augment_list, k=self.n)

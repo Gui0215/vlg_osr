@@ -104,7 +104,7 @@ def get_equal_len_datasets(dataset1, dataset2):
     return dataset1, dataset2
 
 
-def get_tiny_image_net_datasets(train_transform, test_transform, train_classes=range(20), open_set_classes=range(20, 200), 
+def get_tinyimagenet_datasets(train_transform, test_transform, train_classes=range(20), open_set_classes=range(20, 200), 
                                 balance_open_set_eval=False, split_train_val=True, seed=0):
     np.random.seed(seed)
     # Init train dataset and subsample training classes

@@ -5,23 +5,17 @@ from config import svhn_root
 
 
 class CustomSVHN(SVHN):
-
     def __init__(self, *args, **kwargs):
-
         super(CustomSVHN, self).__init__(*args, **kwargs)
-
         self.uq_idxs = np.array(range(len(self)))
 
     def __getitem__(self, item):
-
         img, label = super().__getitem__(item)
         uq_idx = self.uq_idxs[item]
-
         return img, label, uq_idx
 
 
 def subsample_dataset(dataset, idxs):
-
     dataset.data = dataset.data[idxs]
     dataset.labels = np.array(dataset.labels)[idxs].tolist()
     dataset.uq_idxs = dataset.uq_idxs[idxs]

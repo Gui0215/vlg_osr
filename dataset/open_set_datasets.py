@@ -1,10 +1,9 @@
 from dataset.mnist import get_mnist_datasets
 from dataset.svhn import get_svhn_datasets
 from dataset.cifar import get_cifar_10_10_datasets, get_cifar_10_100_datasets
-from dataset.tinyimagenet import get_tiny_image_net_datasets
-
+from dataset.tinyimagenet import get_tinyimagenet_datasets
+from dataset.imagenet import get_imagenet_datasets
 from dataset.cub import get_cub_datasets
-
 
 from dataset.open_set_splits.osr_splits import osr_splits
 from dataset.augmentations import get_transform
@@ -13,7 +12,7 @@ from config import osr_split_dir
 import os
 import sys
 import pickle
-import torch
+
 
 """
 For each dataset, define function which returns:
@@ -28,16 +27,16 @@ get_dataset_funcs = {
     'cifar-10-10': get_cifar_10_10_datasets,
     'mnist': get_mnist_datasets,
     'svhn': get_svhn_datasets,
-    'tinyimagenet': get_tiny_image_net_datasets,
+    'tinyimagenet': get_tinyimagenet_datasets,
+    'imagenet': get_imagenet_datasets,
     'cub': get_cub_datasets,
     # 'scars': get_scars_datasets,
     # 'aircraft': get_aircraft_datasets,
     # 'pku-aircraft': get_pku_aircraft_datasets
 }
 
-def get_datasets(name, transform='default', image_size=224, train_classes=(0, 1, 8, 9), open_set_classes=range(10), 
-                 balance_open_set_eval=False, split_train_val=True, seed=0, args=None, contrast=False):
-
+def get_datasets(name, transform, img_size, train_classes, open_set_classes, 
+                 balance_open_set_eval=False, split_train_val=True, seed=0, args=None):
     """
     :param name: Dataset name
     :param transform: Either tuple of train/test transforms or string of transform type
@@ -49,7 +48,7 @@ def get_datasets(name, transform='default', image_size=224, train_classes=(0, 1,
     if isinstance(transform, tuple):
         train_transform, test_transform = transform
     else:
-        train_transform, test_transform = get_transform(transform_type=transform, image_size=image_size, args=args, contrast=contrast)
+        train_transform, test_transform = get_transform(transform_type=transform, img_size=img_size)
 
     if name in get_dataset_funcs.keys():
         datasets = get_dataset_funcs[name](train_transform, test_transform, train_classes=train_classes,
@@ -73,13 +72,19 @@ def get_class_splits(dataset, split_idx=0, cifar_plus_n=10):
         train_classes = osr_splits[dataset][split_idx]
         open_set_classes = [x for x in range(200) if x not in train_classes]
 
+    elif dataset == 'imagenet-100':
+        train_classes = list(range(100))
+        open_set_classes = list(range(100,1000))
+
+    elif dataset == 'imagenet-200':
+        train_classes = list(range(200))
+        open_set_classes = list(range(200,1000))
+
     elif dataset == 'cub':
         osr_path = os.path.join(osr_split_dir, 'cub_osr_splits.pkl')
         with open(osr_path, 'rb') as f:
             class_info = pickle.load(f)
-
         train_classes = class_info['known_classes']
-
         open_set_classes = class_info['unknown_classes']
         open_set_classes = open_set_classes['Hard'] + open_set_classes['Medium'] + open_set_classes['Easy']
 
@@ -87,9 +92,7 @@ def get_class_splits(dataset, split_idx=0, cifar_plus_n=10):
         osr_path = os.path.join(osr_split_dir, 'aircraft_osr_splits.pkl')
         with open(osr_path, 'rb') as f:
             class_info = pickle.load(f)
-
         train_classes = class_info['known_classes']
-
         open_set_classes = class_info['unknown_classes']
         open_set_classes = open_set_classes['Hard'] + open_set_classes['Medium'] + open_set_classes['Easy']
 

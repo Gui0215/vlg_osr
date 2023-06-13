@@ -33,7 +33,6 @@ def subsample_dataset(dataset, idxs):
     return dataset
 
 def subsample_classes(dataset, include_classes=(0, 1, 8, 9)):
-
     cls_idxs = [x for x, t in enumerate(dataset.targets) if t in include_classes]
 
     target_xform_dict = {}
@@ -41,7 +40,6 @@ def subsample_classes(dataset, include_classes=(0, 1, 8, 9)):
         target_xform_dict[k] = i
 
     dataset = subsample_dataset(dataset, cls_idxs)
-
     dataset.target_transform = lambda x: target_xform_dict[x]
 
     return dataset

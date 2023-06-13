@@ -1,5 +1,4 @@
 from torchvision import transforms
-from dataset.augmentations.cut_out import *
 from dataset.augmentations.randaugment import RandAugment
 
 class TwoCropTransform:
@@ -13,13 +12,13 @@ class TwoCropTransform:
         return [self.transform(x), self.transform(x)]
 
 
-def get_transform(transform_type='default', image_size=32, args=None, contrast=False):
+def get_transform(transform_type='default', img_size=32):
     if transform_type == 'default':
         mean = [0.5, 0.5, 0.5]
         std = [0.5, 0.5, 0.5]
 
         train_transform = transforms.Compose([
-            transforms.Resize((image_size, image_size)),
+            transforms.Resize((img_size, img_size)),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomGrayscale(p=0.2),
             transforms.ToTensor(),
@@ -27,7 +26,7 @@ def get_transform(transform_type='default', image_size=32, args=None, contrast=F
         ])
 
         test_transform = transforms.Compose([
-            transforms.Resize((image_size, image_size)),
+            transforms.Resize((img_size, img_size)),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std)
         ])
@@ -37,14 +36,14 @@ def get_transform(transform_type='default', image_size=32, args=None, contrast=F
         std = (0.2023, 0.1994, 0.2010)
 
         train_transform = transforms.Compose([
-            transforms.RandomCrop(image_size, padding=4),
+            transforms.RandomCrop(img_size, padding=4),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std),
         ])
 
         test_transform = transforms.Compose([
-            transforms.Resize((image_size, image_size)),
+            transforms.Resize((img_size, img_size)),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std),
         ])
@@ -54,27 +53,27 @@ def get_transform(transform_type='default', image_size=32, args=None, contrast=F
         std = (0.229, 0.224, 0.225)
 
         train_transform = transforms.Compose([
-            transforms.Resize((image_size, image_size)),
-            transforms.RandomCrop(image_size, padding=4),
+            transforms.Resize((img_size, img_size)),
+            transforms.RandomCrop(img_size, padding=4),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std),
         ])
 
         test_transform = transforms.Compose([
-            transforms.Resize((image_size, image_size)),
+            transforms.Resize((img_size, img_size)),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std),
         ])
 
     elif transform_type == 'cgnl':
-        base_size = int((512 / 448) * image_size)
+        base_size = int((512 / 448) * img_size)
 
         mean = [0.485, 0.456, 0.406]
         std = [0.229, 0.224, 0.225]
 
         train_transform = transforms.Compose([
-            transforms.RandomResizedCrop(size=image_size, scale=(0.08, 1.25)),
+            transforms.RandomResizedCrop(size=img_size, scale=(0.08, 1.25)),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std)
@@ -82,29 +81,30 @@ def get_transform(transform_type='default', image_size=32, args=None, contrast=F
 
         test_transform = transforms.Compose([
             transforms.Resize(base_size),
-            transforms.CenterCrop(image_size),
+            transforms.CenterCrop(img_size),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std)
         ])
 
-    elif transform_type == 'cutout':
-        mean = np.array([0.4914, 0.4822, 0.4465])
-        std = np.array([0.2470, 0.2435, 0.2616])
+    elif transform_type == 'imagenet':
+        mean = [0.485, 0.456, 0.406]
+        std = [0.229, 0.224, 0.225]
 
         train_transform = transforms.Compose([
-            transforms.RandomCrop(image_size, padding=4),
+            transforms.RandomResizedCrop(224),
             transforms.RandomHorizontalFlip(),
-            normalize(mean, std),
-            cutout(mask_size=int(image_size / 2),p=1,cutout_inside=False),
-            to_tensor(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=mean, std=std)
         ])
         test_transform = transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
             transforms.ToTensor(),
             transforms.Normalize(mean, std),
         ])
 
     elif transform_type == 'rand-augment':
-        if image_size == 32:
+        if img_size == 32:
             mean = (0.4914, 0.4822, 0.4465)
             std = (0.2023, 0.1994, 0.2010)
         else:
@@ -113,17 +113,17 @@ def get_transform(transform_type='default', image_size=32, args=None, contrast=F
 
 
         train_transform = transforms.Compose([
-            transforms.Resize((image_size, image_size)),
-            transforms.RandomCrop(image_size, padding=4),
+            transforms.Resize((img_size, img_size)),
+            transforms.RandomCrop(img_size, padding=4),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std),
         ])
 
-        train_transform.transforms.insert(0, RandAugment(1, 9, args=args))
+        train_transform.transforms.insert(0, RandAugment(1, 9))
 
         test_transform = transforms.Compose([
-            transforms.Resize((image_size, image_size)),
+            transforms.Resize((img_size, img_size)),
             transforms.ToTensor(),
             transforms.Normalize(mean=mean, std=std),
         ])
@@ -131,21 +131,18 @@ def get_transform(transform_type='default', image_size=32, args=None, contrast=F
     elif transform_type == 'openhybrid':
         train_transform = transforms.Compose([
             transforms.Grayscale(num_output_channels=3),
-            transforms.Resize((image_size, image_size)),
-            transforms.RandomCrop(image_size, padding=4, padding_mode='reflect'),
+            transforms.Resize((img_size, img_size)),
+            transforms.RandomCrop(img_size, padding=4, padding_mode='reflect'),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
         ])
 
         test_transform = transforms.Compose([
-            transforms.Resize((image_size, image_size)),
+            transforms.Resize((img_size, img_size)),
             transforms.ToTensor(),
         ])
 
     else:
         raise NotImplementedError
-
-    if contrast != False:
-        train_transform = TwoCropTransform(train_transform)
 
     return (train_transform, test_transform)

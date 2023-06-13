@@ -1,0 +1,13 @@
+mnist_root: '/home/gui/Downloads/Datasets/mnist/'                                  # MNIST
+svhn_root: '/home/gui/Downloads/Datasets/svhn'                                     # SVHN
+cifar_10_root: '/home/gui/Downloads/Datasets/cifar-10'                             # CIFAR10
+cifar_100_root: '/home/gui/Downloads/Datasets/cifar-100'                           # CIFAR100
+tinyimagenet_root: '/home/gui/Downloads/Datasets/tiny-imagenet-200/train'          # TinyImageNet
+imagenet_root: '/home/gui/Downloads/Datasets/imagenet'                             # ImageNet-1K
+cub_root: '/home/gui/Downloads/Datasets/CUB_200_2011/'                             # CUB
+aircraft_root: '/home/gui/Downloads/Datasets/fgvc-aircraft-2013b'                  # FGVC-Aircraft
+car_root: "/home/gui/Downloads/Datasets/cars_{}/"                                  # Stanford Cars
+meta_default_path: "/work/sagar/datasets/stanford_car/devkit/cars_{}.mat"          # Stanford Cars Devkit
+pku_air_root: '/home/gui/Downloads/Datasets/pku-air-300/AIR'                       # PKU-AIRCRAFT-300
+
+imagenet21k_root: '/work/sagar/datasets/imagenet21k_resized_new'                   # ImageNet-21K-P
